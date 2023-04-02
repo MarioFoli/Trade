@@ -29,6 +29,8 @@ namespace Trade
         }
         public override void Initialize()
         {
+            ServerApi.Hooks.GameInitialize.Register(this, (args) => { OnInitialize(); });
+   
             //initialize plugin here
         }
         protected override void Dispose(bool disposing)
@@ -36,6 +38,7 @@ namespace Trade
             if (disposing)
             {
                 //dispose used resources here
+                ServerApi.Hooks.GameInitialize.Deregister(this, (args) => { OnInitialize(); });
             }
             //dipose unused resources here
             base.Dispose(disposing);
@@ -52,21 +55,21 @@ namespace Trade
         public void OnInitialize()
         {
             SetupConfig();
-            Commands.ChatCommands.Add(new Command("trade.cfg", TradeReload, "Tradereload")
+            Commands.ChatCommands.Add(new Command("trade.cfg", TradeReload, "trade reload")
             {
                 AllowServer = true,
                 HelpText = "Reloads from config file"
             });
 
     
-            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "Tradelist")
+            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "trade")
             {
                 AllowServer = true,
                 HelpText = "Lists all possible trades"
                 
             });
 
-            Commands.ChatCommands.Add(new Command("trade.trade", TradeTrade, "Tradetrade")
+            Commands.ChatCommands.Add(new Command("trade.trade", TradeTrade, "trade")
             {
                 AllowServer = false,
                 HelpText = "Exchanges items in your inventory for your desired item!"
