@@ -17,7 +17,7 @@ namespace Trade
         }
         public override String Author
         {
-            get { return "MarioFoli"; }
+            get { return "By: MarioFoli"; }
         }
         public override string Description
         {
@@ -50,14 +50,13 @@ namespace Trade
         public void OnInitialize()
         {
             SetupConfig();
-            Commands.ChatCommands.Add(new Command("trade.admin", TradeReload, "trade reload")
+            Commands.ChatCommands.Add(new Command("trade.admin", TradeReload, "tradereload")
             {
                 AllowServer = true,
                 HelpText = "Reloads from config file"
             });
 
-    
-            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "trade list")
+            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "tradelist")
             {
                 AllowServer = true,
                 HelpText = "Lists all possible trades"
@@ -70,7 +69,7 @@ namespace Trade
                 HelpText = "Exchanges items in your inventory for your desired item!"
  
             });
-            Commands.ChatCommands.Add(new Command("trade.add", TradeAdd, "trade add")
+            Commands.ChatCommands.Add(new Command("trade.add", TradeAdd, "tradeadd")
             {
                 AllowServer = true,
                 HelpText = "Adds a new possible trade to the config file."
@@ -111,7 +110,7 @@ namespace Trade
         {
             if (args.Parameters.Count < 2)
             {
-                args.Player.SendErrorMessage("Invalid syntax! Proper synax: //trade add [item] [tradedItem]");
+                args.Player.SendErrorMessage("Invalid syntax! Proper synax: /tradeadd [item] [tradedItem]");
             }
             string item = args.Parameters[0].ToString();
             string tradedItem = args.Parameters[1].ToString();
@@ -127,19 +126,57 @@ namespace Trade
 
         private void TradeList(CommandArgs args)
         {
-            //TODO: List possible trades and their required items from config
+            args.Player.SendMessage("Current Trades:", Microsoft.Xna.Framework.Color.White);
+            args.Player.SendMessage("(Note: Some items are in Item ID Form)", Microsoft.Xna.Framework.Color.Gray);
+            foreach (KeyValuePair<string, string> trade in TradeConfig.possibleTrades)
+            {
+                args.Player.SendMessage(trade.Value + " -> " + trade.Key, Microsoft.Xna.Framework.Color.White);
+            }
         }
         private void TradeTrade(CommandArgs args)
+            //key is what you get, eg desireditem. value is what you give, eg item
         {
-            //TODO: Command args need to pass item desired,
-            //match what item player needs from configs
-            //loop through inventory to see if player has item
-            //if they do, replace item in inventory with item from config
-            TSPlayer player = args.Player;
-            Item[] inventory = player.TPlayer.inventory;
-            foreach (Item item in inventory)
+            if (args.Parameters[0] == "help")
             {
- 
+                args.Player.SendMessage("Commands:", Microsoft.Xna.Framework.Color.White);
+                args.Player.SendMessage("/trade [item] [desireditem] || Turns item -> desired item", Microsoft.Xna.Framework.Color.White);
+            } else
+            {
+                try
+                { 
+                    //TODO: Fix 
+                    string item = args.Parameters[0];
+                    string desiredItem = args.Parameters[1];
+                    if (item != TradeConfig.possibleTrades.GetValueOrDefault(desiredItem))
+                    {
+                        args.Player.SendErrorMessage("That trade doesn't exist. Use /tradelist for a list of possible trades");
+                    } else
+                    {
+                        TSPlayer player = args.Player;
+                        Item[] inventory = player.TPlayer.inventory;
+                        bool foundItem = false;
+                        for (int i = 0; i < inventory.Length; i++)
+                        {
+                            if (inventory[i].Equals(TShock.Utils.GetItemByIdOrName(item)))
+                            {
+                                player.TPlayer.inventory[i] = TShock.Utils.GetItemById(desiredItem[0]); //Set the first slot of the inventory to a mushroom.
+
+                                //Send the packet to update the player's inventory on the server
+                                NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
+                                NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
+                                foundItem = true;
+                                break;
+                            }
+                        }
+                        if (foundItem == false)
+                        {
+                            args.Player.SendErrorMessage("You don't have the required items for this trade! The current trade is " + args.Parameters[0] + " -> " + desiredItem);
+                        }
+                    }
+                } catch (Exception ex)
+                {
+                    args.Player.SendErrorMessage("That trade doesn't exist. Use /tradelist for a list of possible trades.");
+                }
             }
         }
     }
