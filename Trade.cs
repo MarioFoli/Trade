@@ -159,9 +159,7 @@ namespace Trade
                         {
                             if (inventory[i].Equals(TShock.Utils.GetItemByIdOrName(item)))
                             {
-                                player.TPlayer.inventory[i] = TShock.Utils.GetItemById(desiredItem[0]); //Set the first slot of the inventory to a mushroom.
-
-                                //Send the packet to update the player's inventory on the server
+                                player.TPlayer.inventory[i] = TShock.Utils.GetItemById(desiredItem[0]);
                                 NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
                                 NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
                                 foundItem = true;
