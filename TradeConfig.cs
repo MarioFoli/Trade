@@ -9,9 +9,14 @@ namespace Trade
 {
     public class TradeConfigFile
     {
+        public string howTo = "To add new trades, either use /trade add [item] [tradedItem] ingame, or add them manually here. Use of item id names or names are accepted.";
         public string errorMessage = "You don't have the required materials to trade for this item!";
-        
-        //implement logic for adding new trades. probably a map of some king?
+        public Dictionary<string, string> possibleTrades = new Dictionary<string, string>
+        {
+            { "3017", "3208" }
+
+        };
+        //TODO: Add new trades via CSC, ex: apple -> terra blade
 
 
         public static TradeConfigFile Read(string path)

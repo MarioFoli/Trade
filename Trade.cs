@@ -29,18 +29,15 @@ namespace Trade
         }
         public override void Initialize()
         {
+            SetupConfig();
             ServerApi.Hooks.GameInitialize.Register(this, (args) => { OnInitialize(); });
-   
-            //initialize plugin here
         }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                //dispose used resources here
                 ServerApi.Hooks.GameInitialize.Deregister(this, (args) => { OnInitialize(); });
             }
-            //dipose unused resources here
             base.Dispose(disposing);
         }
         public Trade(Main game)
@@ -50,19 +47,17 @@ namespace Trade
             TradeConfig = new TradeConfigFile();
 
         }
-        //main plugin logic
-
         public void OnInitialize()
         {
             SetupConfig();
-            Commands.ChatCommands.Add(new Command("trade.cfg", TradeReload, "trade reload")
+            Commands.ChatCommands.Add(new Command("trade.admin", TradeReload, "trade reload")
             {
                 AllowServer = true,
                 HelpText = "Reloads from config file"
             });
 
     
-            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "trade")
+            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "trade list")
             {
                 AllowServer = true,
                 HelpText = "Lists all possible trades"
@@ -75,9 +70,15 @@ namespace Trade
                 HelpText = "Exchanges items in your inventory for your desired item!"
  
             });
-    
+            Commands.ChatCommands.Add(new Command("trade.add", TradeAdd, "trade add")
+            {
+                AllowServer = true,
+                HelpText = "Adds a new possible trade to the config file."
+
+            });
+
         }
-        //startup logic
+        //Startup and Reload Logic:
         public static void SetupConfig()
         {
             try
@@ -92,13 +93,13 @@ namespace Trade
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("[Trade] Error in config file");
                 Console.ForegroundColor = ConsoleColor.Gray;
-
                 TShock.Log.ConsoleError("[Trade] Config file error");
                 TShock.Log.ConsoleError(ex.ToString());
             }
         }
 
-        //main command logic
+
+        //Main Command Logic:
         private void TradeReload(CommandArgs args)
         {
             SetupConfig();
@@ -106,13 +107,40 @@ namespace Trade
             args.Player.SendSuccessMessage("Trade Plugin Reload Initiated");
         }
 
+        private void TradeAdd(CommandArgs args)
+        {
+            if (args.Parameters.Count < 2)
+            {
+                args.Player.SendErrorMessage("Invalid syntax! Proper synax: //trade add [item] [tradedItem]");
+            }
+            string item = args.Parameters[0].ToString();
+            string tradedItem = args.Parameters[1].ToString();
+            try
+            {
+                TradeConfig.possibleTrades.Add(tradedItem, item);
+                args.Player.SendSuccessMessage("Added trade for " + item + "-> " + tradedItem + "!");
+            } catch (Exception ex)
+            {
+                args.Player.SendErrorMessage("That item is invalid, or already has a trade associated with it.");
+            } 
+        }
+
         private void TradeList(CommandArgs args)
         {
-            //implement logic for reading json file of all possible trades
+            //TODO: List possible trades and their required items from config
         }
         private void TradeTrade(CommandArgs args)
         {
-            //implement logic for trading
+            //TODO: Command args need to pass item desired,
+            //match what item player needs from configs
+            //loop through inventory to see if player has item
+            //if they do, replace item in inventory with item from config
+            TSPlayer player = args.Player;
+            Item[] inventory = player.TPlayer.inventory;
+            foreach (Item item in inventory)
+            {
+ 
+            }
         }
     }
 }
