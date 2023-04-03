@@ -58,7 +58,7 @@ namespace Trade
                 HelpText = "Reloads from config file"
             });
 
-            Commands.ChatCommands.Add(new Command("trade.list", TradeList, "tradelist")
+            Commands.ChatCommands.Add(new Command("trade.trade", TradeList, "tradelist")
             {
                 AllowServer = true,
                 HelpText = "Lists all possible trades"
@@ -71,7 +71,7 @@ namespace Trade
                 HelpText = "Exchanges items in your inventory for your desired item!"
  
             });
-            Commands.ChatCommands.Add(new Command("trade.add", TradeAdd, "tradeadd")
+            Commands.ChatCommands.Add(new Command("trade.admin", TradeAdd, "tradeadd")
             {
                 AllowServer = true,
                 HelpText = "Adds a new possible trade to the config file."
@@ -152,7 +152,7 @@ namespace Trade
                         var list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
                         for (int i = 0; i < inventory.Length; i++)
                         {
-                            if (inventory[i].IsTheSameAs(list))
+                            if (inventory[i].IsTheSameAs(list)) //add logic for checking if item is in desired amount
                             {
                                 args.Player.SendSuccessMessage("Success!");
                                 player.TPlayer.inventory[i] = TShock.Utils.GetItemByIdOrName(desiredItem)[0];
