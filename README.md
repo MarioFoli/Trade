@@ -11,3 +11,8 @@ Commands:
 /tradelist || Lists all possible trades.  
 /tradeadd [item] [desiredItem] || Adds a new possible trade to the config.  
 /tradereload || Reloads the plugin.  
+
+Known bugs:  
+- Added trades via /tradeadd do not persist after a server restart. For now, use the config.  
+- Trades must be made using item ids. Support for item names will come soon.  
+- Trades do not take into account number of items. Eg, trading 1 dirt for 1 stone while having 999 dirt will result in only one stone.
