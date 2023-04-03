@@ -149,10 +149,12 @@ namespace Trade
                         TSPlayer player = args.Player;
                         Item[] inventory = player.TPlayer.inventory;
                         bool foundItem = false;
-                        var list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
+                        Item list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
+                        args.Player.SendErrorMessage(list.ToString());
+                        args.Player.SendErrorMessage(list.type.ToString());
                         for (int i = 0; i < inventory.Length; i++)
                         {
-                            if (inventory[i].IsTheSameAs(list)) //add logic for checking if item is in desired amount
+                            if (inventory[i].IsTheSameAs(list)) //TODO: add logic for checking if item is in desired amount
                             {
                                 args.Player.SendSuccessMessage("Success!");
                                 player.TPlayer.inventory[i] = TShock.Utils.GetItemByIdOrName(desiredItem)[0];
