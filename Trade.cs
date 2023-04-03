@@ -79,7 +79,6 @@ namespace Trade
             });
 
         }
-        //Startup and Reload Logic:
         public static void SetupConfig()
         {
             try
@@ -98,16 +97,12 @@ namespace Trade
                 TShock.Log.ConsoleError(ex.ToString());
             }
         }
-
-
-        //Main Command Logic:
         private void TradeReload(CommandArgs args)
         {
             SetupConfig();
             TShock.Log.ConsoleInfo("Trade Plugin Reload Intiated");
             args.Player.SendSuccessMessage("Trade Plugin Reload Initiated");
         }
-
         private void TradeAdd(CommandArgs args)
         {
             if (args.Parameters.Count < 2)
@@ -125,7 +120,6 @@ namespace Trade
                 args.Player.SendErrorMessage("That item is invalid, or already has a trade associated with it.");
             } 
         }
-
         private void TradeList(CommandArgs args)
         {
             args.Player.SendMessage("Current Trades:", Microsoft.Xna.Framework.Color.White);
@@ -136,7 +130,6 @@ namespace Trade
             }
         }
         private void TradeTrade(CommandArgs args)
-            //key is what you get, eg desireditem. value is what you give, eg item
         {
             if (args.Parameters[0] == "help")
             {
@@ -146,7 +139,6 @@ namespace Trade
             {
                 try
                 { 
-                    //TODO: Fix equality check between inventory[i] and tradedItem
                     string tradedItem = args.Parameters[0];
                     string desiredItem = args.Parameters[1];
                     if (tradedItem != TradeConfig.possibleTrades.GetValueOrDefault(desiredItem))
@@ -172,10 +164,7 @@ namespace Trade
                         }
                         if (foundItem == false)
                         {
-                            player.TPlayer.inventory[0] = TShock.Utils.GetItemById(5);
-                            NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[0].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, 0, player.TPlayer.inventory[0].prefix);
-                            NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[0].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, 0, player.TPlayer.inventory[0].prefix);
-                            args.Player.SendErrorMessage("You don't have the required items for this trade! The current trade is " + args.Parameters[0] + " -> " + desiredItem);
+                            args.Player.SendErrorMessage("You don't have the required items for this trade! View current trades with /tradelist!");
                         }
                     }
                 } catch (Exception ex)
