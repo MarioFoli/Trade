@@ -2,6 +2,8 @@
 using TerrariaApi.Server;
 using TShockAPI;
 using Terraria;
+using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace Trade
 {
@@ -17,7 +19,7 @@ namespace Trade
         }
         public override String Author
         {
-            get { return "By: MarioFoli"; }
+            get { return "MarioFoli"; }
         }
         public override string Description
         {
@@ -144,10 +146,10 @@ namespace Trade
             {
                 try
                 { 
-                    //TODO: Fix 
-                    string item = args.Parameters[0];
+                    //TODO: Fix equality check between inventory[i] and tradedItem
+                    string tradedItem = args.Parameters[0];
                     string desiredItem = args.Parameters[1];
-                    if (item != TradeConfig.possibleTrades.GetValueOrDefault(desiredItem))
+                    if (tradedItem != TradeConfig.possibleTrades.GetValueOrDefault(desiredItem))
                     {
                         args.Player.SendErrorMessage("That trade doesn't exist. Use /tradelist for a list of possible trades");
                     } else
@@ -155,11 +157,13 @@ namespace Trade
                         TSPlayer player = args.Player;
                         Item[] inventory = player.TPlayer.inventory;
                         bool foundItem = false;
+                        var list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
                         for (int i = 0; i < inventory.Length; i++)
                         {
-                            if (inventory[i].Equals(TShock.Utils.GetItemByIdOrName(item)))
+                            if (inventory[i].IsTheSameAs(list))
                             {
-                                player.TPlayer.inventory[i] = TShock.Utils.GetItemById(desiredItem[0]);
+                                args.Player.SendSuccessMessage("Success!");
+                                player.TPlayer.inventory[i] = TShock.Utils.GetItemByIdOrName(desiredItem)[0];
                                 NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
                                 NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
                                 foundItem = true;
@@ -168,6 +172,9 @@ namespace Trade
                         }
                         if (foundItem == false)
                         {
+                            player.TPlayer.inventory[0] = TShock.Utils.GetItemById(5);
+                            NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[0].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, 0, player.TPlayer.inventory[0].prefix);
+                            NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[0].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, 0, player.TPlayer.inventory[0].prefix);
                             args.Player.SendErrorMessage("You don't have the required items for this trade! The current trade is " + args.Parameters[0] + " -> " + desiredItem);
                         }
                     }
