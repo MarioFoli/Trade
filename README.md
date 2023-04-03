@@ -12,7 +12,6 @@ Commands:
 /tradeadd [item] [desiredItem] || Adds a new possible trade to the config.  
 /tradereload || Reloads the plugin.  
 
-<<<<<<< HEAD
 Permissions:
 - trade.admin || Allows use of /tradeadd and /tradereload
 - trade.trade || Allows use of /tradelist and /trade
@@ -22,9 +21,3 @@ Known bugs:
 - Added trades via /tradeadd do not persist after a server restart. For now, use the config.    
 - Trades must be made using item ids. Support for item names will come soon.   
 - Trades do not take into account number of items. Eg, trading 1 dirt for 1 stone while having 999 dirt will result in only one stone.  
-=======
-Known bugs:  
-- Added trades via /tradeadd do not persist after a server restart. For now, use the config.  
-- Trades must be made using item ids. Support for item names will come soon.  
-- Trades do not take into account number of items. Eg, trading 1 dirt for 1 stone while having 999 dirt will result in only one stone.
->>>>>>> fda3d876fd04c0d8d40f6c4055b09dd27c7a2dd9
