@@ -120,7 +120,7 @@ namespace Trade
             try
             {
                 TradeConfig.possibleTrades.Add(tradedItem, item);
-                args.Player.SendSuccessMessage("Added trade for " + item + "-> " + tradedItem + "!");
+                args.Player.SendSuccessMessage("Added trade for " + item + "-> " + tradedItem + "! Note: This is currently only valid until the server restarts.");
             } catch (Exception ex)
             {
                 args.Player.SendErrorMessage("That item is invalid, or already has a trade associated with it.");
@@ -138,6 +138,7 @@ namespace Trade
                 string item = args.Parameters[0].ToString();
                 string tradedItem = args.Parameters[1].ToString();
                 TradeConfig.possibleTrades.Remove(tradedItem, out item);
+                args.Player.SendSuccessMessage("Removed trade " + item + " -> " + tradedItem + ". Note: This is currently only valid until the server restarts.");
             } catch (Exception ex)
             {
                 args.Player.SendErrorMessage("That trade is invalid, or has already been removed.");
@@ -154,7 +155,11 @@ namespace Trade
         }
         private void TradeTrade(CommandArgs args)
         {
-            if (args.Parameters[0] == "help")
+            if (args.Parameters.Count <= 1) 
+            {
+                args.Player.SendErrorMessage("Invalid syntax! Use /trade help for help.");
+            }
+            if (args.Parameters[0] == "help" )
             {
                 args.Player.SendMessage("Commands:", Microsoft.Xna.Framework.Color.Gray);
                 args.Player.SendMessage("/trade [item] [desireditem] || Turns item -> desired item. Item ids or item names (with quotations) are acceptable.", Microsoft.Xna.Framework.Color.White);
@@ -175,14 +180,22 @@ namespace Trade
                         Item list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
                         for (int i = 0; i < inventory.Length; i++)
                         {
-                            if (inventory[i].IsTheSameAs(list)) //TODO: add logic for checking if item is in desired amount
+                            if (inventory[i].IsTheSameAs(list))
                             {
-                                args.Player.SendSuccessMessage("Success!");
-                                player.TPlayer.inventory[i] = TShock.Utils.GetItemByIdOrName(desiredItem)[0];
-                                NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
-                                NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
-                                foundItem = true;
-                                break;
+                                if (!(inventory[i].IsNotTheSameAs(list))) {
+                                    args.Player.SendSuccessMessage("Success!");
+                                    player.TPlayer.inventory[i] = TShock.Utils.GetItemByIdOrName(desiredItem)[0];
+                                    NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
+                                    NetMessage.SendData((int)PacketTypes.PlayerSlot, player.Index, -1, new Terraria.Localization.NetworkText(player.TPlayer.inventory[i].Name, Terraria.Localization.NetworkText.Mode.Literal), player.Index, i, player.TPlayer.inventory[i].prefix);
+                                    foundItem = true;
+                                    break;
+                                } else
+                                {
+                                    args.Player.SendErrorMessage("Error. Please only have 1 of the item you are trading in your inventory at a time.");
+                                    foundItem = true;
+                                    break;
+                                }
+                               
                             }
                         }
                         if (foundItem == false)
