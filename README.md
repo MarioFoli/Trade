@@ -9,7 +9,8 @@ New trades can be added in game, or via the config. Item IDs or names are accept
 Commands:
 /trade [item] [desiredItem] || Replaces an item in your inventory into the desired item.  
 /tradelist || Lists all possible trades.  
-/tradeadd [item] [desiredItem] || Adds a new possible trade to the config.  
+/tradeadd [item] [desiredItem] || Adds a new possible trade to the config. 
+/traderemove [item] [desiredItem] || Removes a trade from the config.
 /tradereload || Reloads the plugin.  
 
 Permissions:
@@ -18,6 +19,5 @@ Permissions:
 
 
 Known bugs:  
-- Added trades via /tradeadd do not persist after a server restart. For now, use the config.    
-- Trades must be made using item ids. Support for item names will come soon.   
+- Added trades via /tradeadd do not persist after a server restart. For now, use the config.      
 - Trades do not take into account number of items. Eg, trading 1 dirt for 1 stone while having 999 dirt will result in only one stone.  

@@ -55,13 +55,13 @@ namespace Trade
             Commands.ChatCommands.Add(new Command("trade.admin", TradeReload, "tradereload")
             {
                 AllowServer = true,
-                HelpText = "Reloads from config file"
+                HelpText = "Reloads from config file."
             });
 
             Commands.ChatCommands.Add(new Command("trade.trade", TradeList, "tradelist")
             {
                 AllowServer = true,
-                HelpText = "Lists all possible trades"
+                HelpText = "Lists all possible trades."
                 
             });
 
@@ -77,6 +77,12 @@ namespace Trade
                 HelpText = "Adds a new possible trade to the config file."
 
             });
+            Commands.ChatCommands.Add(new Command("trade.admin", TradeRemove, "traderemove")
+            {
+                AllowServer = true,
+                HelpText = "Removes a trade from the config file."
+            });
+            
 
         }
         public static void SetupConfig()
@@ -107,7 +113,7 @@ namespace Trade
         {
             if (args.Parameters.Count < 2)
             {
-                args.Player.SendErrorMessage("Invalid syntax! Proper synax: /tradeadd [item] [tradedItem]");
+                args.Player.SendErrorMessage("Invalid syntax! Proper sytnax: /tradeadd [item] [desiredItem]");
             }
             string item = args.Parameters[0].ToString();
             string tradedItem = args.Parameters[1].ToString();
@@ -120,10 +126,27 @@ namespace Trade
                 args.Player.SendErrorMessage("That item is invalid, or already has a trade associated with it.");
             } 
         }
+        private void TradeRemove(CommandArgs args)
+        {
+            if (args.Parameters.Count < 1)
+            {
+                args.Player.SendErrorMessage("Invalid syntax! Proper syntax /traderemove [item] [desiredItem]");
+            }
+
+            try
+            {
+                string item = args.Parameters[0].ToString();
+                string tradedItem = args.Parameters[1].ToString();
+                TradeConfig.possibleTrades.Remove(tradedItem, out item);
+            } catch (Exception ex)
+            {
+                args.Player.SendErrorMessage("That trade is invalid, or has already been removed.");
+            }
+        }
         private void TradeList(CommandArgs args)
         {
             args.Player.SendMessage("Current Trades:", Microsoft.Xna.Framework.Color.White);
-            args.Player.SendMessage("(Note: Some items are in Item ID Form)", Microsoft.Xna.Framework.Color.Gray);
+            args.Player.SendMessage("(Note: Some items may be in Item ID Form)", Microsoft.Xna.Framework.Color.Gray);
             foreach (KeyValuePair<string, string> trade in TradeConfig.possibleTrades)
             {
                 args.Player.SendMessage(trade.Value + " -> " + trade.Key, Microsoft.Xna.Framework.Color.White);
@@ -133,8 +156,8 @@ namespace Trade
         {
             if (args.Parameters[0] == "help")
             {
-                args.Player.SendMessage("Commands:", Microsoft.Xna.Framework.Color.White);
-                args.Player.SendMessage("/trade [item] [desireditem] || Turns item -> desired item", Microsoft.Xna.Framework.Color.White);
+                args.Player.SendMessage("Commands:", Microsoft.Xna.Framework.Color.Gray);
+                args.Player.SendMessage("/trade [item] [desireditem] || Turns item -> desired item. Item ids or item names (with quotations) are acceptable.", Microsoft.Xna.Framework.Color.White);
             } else
             {
                 try
@@ -150,8 +173,6 @@ namespace Trade
                         Item[] inventory = player.TPlayer.inventory;
                         bool foundItem = false;
                         Item list = TShock.Utils.GetItemByIdOrName(tradedItem)[0];
-                        args.Player.SendErrorMessage(list.ToString());
-                        args.Player.SendErrorMessage(list.type.ToString());
                         for (int i = 0; i < inventory.Length; i++)
                         {
                             if (inventory[i].IsTheSameAs(list)) //TODO: add logic for checking if item is in desired amount

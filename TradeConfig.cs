@@ -9,13 +9,28 @@ namespace Trade
 {
     public class TradeConfigFile
     {
-        public string howTo = "To add new trades, either use /trade add [item] [tradedItem] ingame, or add them manually here. Only use of item ID names are accepted.";
-        public string howTo2 = "Currently, only 1:1 trades are possible. Example. StoneBlock, DirtBlock creates a trade for  DirtBlock -> StoneBlock";
+        public string howTo = "To add new trades, either use /trade add [item] [tradedItem] ingame, or add them manually here. Use of Item ID Names or item names are accepted.";
+        public string howTo2 = "Currently, only 1:1 trades are possible. Example: StoneBlock, DirtBlock creates a trade for  DirtBlock -> StoneBlock";
         public Dictionary<string, string> possibleTrades = new Dictionary<string, string>
         {
-            { "3017", "3208" },
-            { "3", "2" },
-            { "Stone Block", "Dirt Block" }
+            { "Flower Boots", "Jungle Crate" },
+            { "Anklet of the Wind", "Jungle Crate" },
+            { "Feral Claws", "Jungle Crate" },
+            { "Boomstick", "Jungle Crate" },
+            { "Staff of Regrowth", "Jungle Crate" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
+            { "", "" },
         };
 
         public static TradeConfigFile Read(string path)
